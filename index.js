@@ -12,7 +12,31 @@ restService.use(bodyParser.urlencoded({
 restService.use(bodyParser.json());
 
 restService.post('/echo', function(req, res) {
+    
+    var http = require('http');
+    
+    var options={
+        
+        host:'samples.openweathermap.or',
+        port:80,
+        path:'/data/2.5/weather?zip=01485,ph&appid=66910cc54f55f6bc8de8dc666ccb3120',
+        method: 'GET'
+        
+    };
+    
     var speech = req.body.result && req.body.result.parameters && req.body.result.parameters.echoText ? req.body.result.parameters.echoText : "Seems like some problem. Speak again."
+    
+    http.request(options,function(res){
+        
+        res.on('data',function(chunk){
+            
+            speech+=chunk;
+            
+        });
+        
+    });
+    
+    
     return res.json({
         speech: speech,
         displayText: speech,
